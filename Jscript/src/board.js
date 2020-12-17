@@ -15,10 +15,10 @@ function _makeGrid () {
   const pieceb = new Piece("black");
   const piecew = new Piece("white");
 
-  grid[3][4] = pieceb.toString();
-  grid[4][3] = pieceb.toString();
-  grid[3][3] = piecew.toString();
-  grid[4][4] = piecew.toString();
+  grid[3][4] = pieceb;
+  grid[4][3] = pieceb;
+  grid[3][3] = piecew;
+  grid[4][4] = piecew;
   return grid
 }
 
@@ -27,7 +27,6 @@ function _makeGrid () {
  */
 function Board () {
   this.grid = _makeGrid();
-  return this.grid;
 }
 
 Board.DIRS = [
@@ -52,6 +51,11 @@ Board.prototype.isValidPos = function (pos) {
  * throwing an Error if the position is invalid.
  */
 Board.prototype.getPiece = function (pos) {
+  if (this.isValidPos(pos)) {
+    return this.grid[pos[0]][pos[1]]
+  } else {
+    throw new Error('Not valid pos!');
+  };
 };
 
 /**
@@ -59,12 +63,26 @@ Board.prototype.getPiece = function (pos) {
  * matches a given color.
  */
 Board.prototype.isMine = function (pos, color) {
+  if (this.getPiece(pos) === undefined) {
+    return false;
+  
+  } else { 
+    if (this.getPiece(pos).color === color) { 
+      return true;
+    };
+  };
+
+  return false;
 };
 
 /**
  * Checks if a given position has a piece on it.
  */
 Board.prototype.isOccupied = function (pos) {
+  if (this.getPiece(pos) === undefined) {
+    return false;
+  };
+  return true;
 };
 
 /**
@@ -81,6 +99,26 @@ Board.prototype.isOccupied = function (pos) {
  * Returns empty array if no pieces of the opposite color are found.
  */
 Board.prototype._positionsToFlip = function(pos, color, dir, piecesToFlip){
+  if (!(this.isValidPos(pos))) {
+    return [];
+  }
+
+  if (piecesToFlip === undefined) {
+    piecesToFlip = [];
+  }
+
+  let nextPos = [pos[0] + dir[0], pos[1] + dir[1]];
+
+  if ((this.getPiece(nextPos)) && ( !this.isMine(nextPos, color) ) ) {
+
+    piecesToFlip.push(nextPos);
+    return this._positionsToFlip(nextPos, color, dir, piecesToFlip);
+
+  } else {
+
+    return piecesToFlip;
+
+  };
 };
 
 /**
@@ -89,6 +127,11 @@ Board.prototype._positionsToFlip = function(pos, color, dir, piecesToFlip){
  * color being flipped.
  */
 Board.prototype.validMove = function (pos, color) {
+  // if (!this.isOccupied ) {
+  //   if () {
+
+  //   };
+  // } ;
 };
 
 /**
